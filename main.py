@@ -6,7 +6,7 @@ def main(args):
             new_note(args[i + 1])
 
 def new_note(description):
-    print(description)
+    # TODO: Save to file
 
 # def delete_note():
 
