@@ -7,3 +7,5 @@ if platform.system() == 'Linux':
     config_path = os.path.join(' ', 'home', os.getlogin(), '.terminoter')
     if not os.path.exists(home_path):
         os.mkdir(config_path)
+    else:
+        print("Seems like you already have terminoter installed.")

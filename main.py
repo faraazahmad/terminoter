@@ -1,4 +1,11 @@
-import sys
+import platform
+import os
+
+notes_file_path = ''
+if platform.system() == 'Linux':
+    notes_file_path = os.path.join(
+        '/home', os.getlogin(), '.terminoter', 'notes'
+    )
 
 def main(args):
     for i in range(1, len(args)):
@@ -6,8 +13,10 @@ def main(args):
             new_note(args[i + 1])
 
 def new_note(description):
-    # TODO: Save to file
+    notes_file = open(notes_file_path, 'a+')
+    notes_file.write(description + '\n')
+    notes_file.close()
 
 # def delete_note():
 
-main(sys.argv)
+main(platform.sys.argv)
