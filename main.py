@@ -15,37 +15,28 @@ def main(args):
             search_note(args[i + 1])
         elif args[i] == '-d' or args[i] == '--delete':
             delete_note(args[i + 1])
+        elif args[i] == '-l' or args[i] == '--list':
+            list_notes()
 
 # Create a new note in the DB using the description provided
 def new_note(description):
-    # create a new db connection cursor
-    db_conn = Db()
-    # add the record in the DB
-    db_conn.new_note(description)
-    # close the connection to the DB
-    db_conn.close_conn()
+    # call the db function to create a new row
+    db.insert_new_note(description)
 
 # search a record in the db matching the provided description
 def search_note(description):
-    # create a new connection to the db
-    db_conn = Db
-    # store the result provided by sqlite and print it
-    result = db_conn.search_by_description(description)
-    print(result)
-    # TODO: handle no result case
-
-    # close the connection to the db
-    db_conn.close_conn()
+    # execute the function that searches for the record
+    db.search_by_description(description)
 
 # delete a note from the DB where the description matches
 # the provided description
 def delete_note(description):
-    # create a new connection cursor to the db
-    db_conn = Db()
-    # delete the record that matches the description
-    db_conn.delete_by_description()
-    # close the connection to the DB
-    db_conn.close_conn()
+    # Call the db function to delete the record
+    db.delete_by_description(description)
+
+# function to API to db function to list all records
+def list_notes():
+    db.list_records()
 
 # call the driver function
 main(sys.argv)

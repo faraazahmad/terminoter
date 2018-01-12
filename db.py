@@ -5,42 +5,97 @@ import sqlite3
 # new note insertion to the database
 import datetime
 
-class Db:
-    def __init__(self):
-        # create a Connect object that represents the database
-        self.conn = sqlite3.connect('terminoter.db')
+# use os library to get the name of current user
+import os
 
-        # create a cursor to handle the DB connection
-        self.c = conn.cursor()
+def insert_new_note(description):
+    # create a Connect object that represents the database
+    conn = sqlite3.connect('terminoter.db')
+
+    # create a cursor to handle the DB connection
+    c = conn.cursor()
+
+    # get the current date and time
+    now = datetime.datetime.now()
+    # change the time in text format for example:
+    # '2018-01-04 20:16'
+    datetime_string = now.strftime("%Y-%m-%d %H:%M")
+
+    # insert the description along with the datetime
+    c.execute("""insert into notes
+        values (?, ?, ?)""", (datetime_string, description, os.getlogin()))
+
+    conn.commit()
+    # close the connection
+    c.close()
+
+
+# Create the database table
+def create_table():
+    # create a Connect object that represents the database
+    conn = sqlite3.connect('terminoter.db')
+    # create a cursor to handle the DB connection
+    c = conn.cursor()
+
+    # create the table
+    c.execute('''create table notes
+        (date text, description text, user text)''')
+
+    # close the connection
+    c.close()
+
+# search the db based on the description
+def search_by_description(description):
+    # create a Connect object that represents the database
+    conn = sqlite3.connect('terminoter.db')
+    # create a cursor to handle the DB connection
+    c = conn.cursor()
+
+    # create a tuple of description to avoid SQL injection
+    t = (description, )
+    # select and return the row(s) matching the description
+    rows = c.execute("select * from notes where description=?", t)
     
-    # Create the database table
-    def create_table():
-        self.c.execute('''create table notes
-            (date text, description text, user text)''')
+    # TODO: clean up the following code
+    # iterate over result as rows
+    for record in rows:
+        print(record[1])
 
-    def new_note(description):
-        # get the current date and time
-        now = datetime.datetime.now()
-        # change the time in text format for example:
-        # '2018-01-04 20:16'
-        datetime_string = now.strftime("%Y-%m-%d %H:%M")
+    # TODO: handle empty result case
 
-        # insert the description along with the datetime
-        self.c.execute("""insert into notes
-            values (%s, %s)""", datetime_string, description)
+    # close the connection
+    c.close()
 
-    def search_by_description(description):
-        # create a tuple of description to avoid SQL injection
-        t = (description, )
-        # select and return the record matching the description
-        self.c.execute("select * from notes where description=?", t)
+# list all the records in the table
+def list_records():
+    # create a Connect object that represents the database
+    conn = sqlite3.connect('terminoter.db')
+    # create a cursor to handle the DB connection
+    c = conn.cursor()
 
-    def delete_by_description(description):
-        # create a tuple of description to avoid SQL injection
-        t = (description, )
-        # delete the record that matches the description
-        self.c.execute("delete from notes where description=?", t)
+    # select all rows from the table and store the result
+    rows = c.execute("select * from notes")
 
-    # close the connection to the db
-    def close_conn():
-        self.c.close()
+    # print the description of all the rows in the table
+    for record in rows:
+        print(record[1])
+
+    # close the connection
+    c.close()
+
+# delete a record from the db that matches the description
+def delete_by_description(description):
+    # create a Connect object that represents the database
+    conn = sqlite3.connect('terminoter.db')
+    # create a cursor to handle the DB connection
+    c = conn.cursor()
+
+    # create a tuple of description to avoid SQL injection
+    t = (description, )
+    # delete the record that matches the description
+    c.execute("delete from notes where description=?", t)
+    # commit the changes to the db table
+    conn.commit()
+
+    # close the connection
+    c.close()
